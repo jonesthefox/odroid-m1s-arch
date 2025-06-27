@@ -29,6 +29,12 @@ Check [Recovery steps](README.md#recovery-steps).
 
 ## Start Odroid M1S in UMS Mode
 
+> **Hint:** If you already use my u-boot image, you can hit the `any key` when u-boot
+> starts. Type `ums 0 mmc 0` to serve the whole internal emmc.
+> 
+> **Usage**:
+> ums <USB_controller> [\<devtype\>] <dev[:part]>
+
 Insert an SD card with the Odroid UMS image into your Odroid and boot the device.
 You find the needed `ODROID-M1S_EMMC2UMS.img`
 here: [wiki.odroid.com](https://wiki.odroid.com/odroid-m1s/getting_started/os_installation_guide?redirect=1#install_over_usb_from_pc)
@@ -38,18 +44,14 @@ here: [wiki.odroid.com](https://wiki.odroid.com/odroid-m1s/getting_started/os_in
 ## The Easy Way
 
 1. Download my Arch Linux Image
-   image: ~~[arch_image.img.gz]()~~ (215M). Yes, there is an easy way that involves
+   image: `odroid-m1s.img.gz` (603.97 MB). Yes, there is an easy way that involves
    writing a tar.gz with dd on your device. But hey, it may install ransomware and
    whatnot, so why take the risk?
 
 2. Write the image to your device using the following command:
 
-   > **Note:** If you already installed my image, you can skip step 3 and start the
-   U-Boot console directly on the device. Run `ums mmc 0` and connect the Odroid
-   microUSB port to your host computer.
-
     ```bash
-    gzip -dc arch_image.img.gz | dd of=/dev/sdX bs=4M status=progress
+    gzip -dc odroid-m1s.img.gz | dd of=/dev/sdX bs=4M status=progress
     ```
 
 3. Unplug the SD card (If you used the UMS boot SD) and reboot the device.
@@ -64,9 +66,9 @@ Aka. "I like typing commands i never used before in a shell".
 
 ### Install U-Boot
 
-1. Download and extract U-Boot:
+1. Download U-Boot image:
 
-    - ~~[u-boot_rk3566-odroid-m1s.zip]()~~ Again, you should not write a random image from
+    - `u-boot-rockchip.bin` (9.20 MB). Again, you should not write a random image from
     some github account you never heard before on a device you like and love.
 
    **Note:** A `boot.scr` file should be present in `/dev/mmcblk0p1` where you set
@@ -114,7 +116,9 @@ enough room for the U-Boot blob.
    mkfs.ext4 /dev/<your usb storage device partition 2> -L rootfs
    ```
 
-2. Extract the ArchLinuxARM-aarch64 root filesystem to the mounted rootfs partition:
+2. Download and extract the ArchLinuxARM-aarch64 root filesystem to the mounted rootfs partition:
+
+   Downlaod `ArchLinuxARM-aarch64-latest.tar.gz` from [https://archlinuxarm.org/platforms/armv8/generic](https://archlinuxarm.org/platforms/armv8/generic)
 
    ```bash
    mount /dev/<your usb storage device partition 2> /mnt
@@ -123,13 +127,12 @@ enough room for the U-Boot blob.
 
 ### Copy Additional Files
 
-1. Copy the contents of ~~[dist.tar.gz]()~~ to the
-   partitions.
+1. Copy the contents of `dist.tar.gz` (49.68 MB) to the appropriate partitions.
 
 - For the rootfs partition run:
 
   ```bash
-  cp -r 6.11.0-rc5-odroid-arm64+ /mnt/lib/modules/
+  cp -r 6.16.0-rc3-odroid-arm64+ /mnt/lib/modules/
   # sync is invoked on unmounting so no need to sync every now and then..
   umount /mnt
   ```

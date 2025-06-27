@@ -174,16 +174,10 @@ cd linux
 Copy the kernel configuration file [config-odroid-m1s](kernel/config-odroid-m1s) to
 `.config` in the kernel source directory and edit it using `make menuconfig`.
 
-### Patch the Kernel
+### ~~Patch the Kernel~~
 
-Apply the patches from [kernel/patches/v2/](kernel/patches/v2):
+Not needed anymore 🥳
 
-```bash
-git am 0001-Correct-vendor-prefix-for-ODROID-M1.patch
-git am 0002-Correct-vendor-prefix-in-dts-file.patch
-git am 0003-Add-support-for-ODROID-M1S-in-dt-bindings.patch
-git am 0004-Add-support-for-ODROID-M1S-in-dts.patch
-```
 
 ### Compile
 
@@ -209,11 +203,15 @@ cp <compile cow>/usr/src/linux/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dt
 Copy the kernel modules:
 
 ```bash
-rm <compile cow>/usr/src/linux/arch/arm64/boot/modules/lib/modules/6.11.0-rc5-odroid-arm64+/build
-cp -r <compile cow>/usr/src/linux/arch/arm64/boot/modules/lib/modules/6.11.0-rc5-odroid-arm64+ <odroid mmcblk0p2>/lib/modules
+rm <compile cow>/usr/src/linux/arch/arm64/boot/modules/lib/modules/6.16.0-rc3-odroid-arm64+/build
+cp -r <compile cow>/usr/src/linux/arch/arm64/boot/modules/lib/modules/6.16.0-rc3-odroid-arm64+ <odroid mmcblk0p2>/lib/modules
 ```
 
 ### Build Initramdisk in Arch
+
+> **Note**: This part needs some elaboration. You have to copy your built kernel modules to the odroid running arch linux arm. 
+
+#### On the odroid
 
 Install `mkinitcpio`:
 
@@ -223,15 +221,24 @@ pacman -S mkinitcpio
 
 Build `/initramfs-linux.img`:
 
+copy the built modules of your kernel to your odroid running arch linux arm, 
+e.g. `<where you compiled the kernel>/linux/arch/arm64/boot/modules/lib/modules/6.16.0-rc3-odroid-arm64+ -> <odroid mmcblk0p2>/lib/modules/6.16.0-rc3-odroid-arm64+` 
+
 ```bash
-mkinitcpio -k 6.11.0-rc5-odroid-arm64+ -g /boot/initramfs-linux.img
+mkinitcpio -k 6.16.0-rc3-odroid-arm64+ -g /boot/initramfs-linux.img
 ```
+
+Now transfer the `initramfs-linux.img` to your compile machine.
+
+#### On the compile cow
 
 Convert it to a format supported by U-Boot:
 
 ```bash
-mkimage -A arm -T ramdisk -C gzip -d /boot/initramfs-linux.img <odroid>/mmcblk0p1/uInitrd
+mkimage -A arm -T ramdisk -C gzip -d initramfs-linux.img uInitrd
 ```
+
+Put `uInitrd` to the odroid /boot (or a boot partition on a SD card).
 
 ## Boot the Odroid
 
@@ -304,6 +311,13 @@ gzip -dc /path/to/full_device_image.img.gz | dd of=/dev/sdX bs=4M status=progres
    here: [wiki.odroid.com](https://wiki.odroid.com/odroid-m1s/getting_started/os_installation_guide?redirect=1#install_over_usb_from_pc)
 2. Insert the SD card into the M1S.
 3. Reboot the M1S while shorting the mask ROM pin with GND for a few seconds.
+
+### UMS mode
+
+Hit the `any key` when u-boot starts. Type `ums 0 mmc 0` to serve the whole internal emmc.
+
+> **Usage**:
+> ums <USB_controller> [\<devtype\>] <dev[:part]>
 
 ## Going forward
 
