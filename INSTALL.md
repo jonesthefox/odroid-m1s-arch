@@ -33,7 +33,7 @@ ums 0 mmc 0
 
 ## The Easy Way
 
-1. **Download the prebuilt image** (`odroid-m1s.img.gz`, ~604 MB)
+1. **Download the prebuilt image** (`odroid-m1s.img.gz`, ~260 MB)
 2. **Flash the image** to your device (SD or UMS-attached eMMC):
 
    ```bash
@@ -42,6 +42,39 @@ ums 0 mmc 0
    ```
 3. **Reboot** the Odroid (remove SD if used for UMS).
 4. **Enjoy** your Arch Linux setup!
+
+### Resize rootfs partition
+
+After flashing, verify that the rootfs on the Odroid takes up all free space.
+
+1. **Launch parted**  
+   On the host connected to the Odroid via UMS, run:
+
+   ```bash
+   sudo parted /dev/sdX
+   ```
+
+**Note:** When `parted` warns that not all of the space appears to be used, choose **Fix** to update the GPT header.
+
+2. **Adjust partition size**
+   In the `parted` prompt:
+
+   ```bash
+   (parted) unit MiB
+   (parted) print
+   (parted) resizepart 2 100%
+   (parted) quit
+   ```
+
+3. **Check and grow the filesystem**
+
+   ```bash
+   # Repair ANY leftover filesystem inconsistencies and answer 'yes' to all prompts
+   e2fsck -fy /dev/sdX2
+
+   # Expand the ext4 filesystem to fill the resized partition
+   resize2fs /dev/sdX2
+   ```
 
 ---
 
