@@ -122,6 +122,16 @@ umount /mnt
 
 ## Backup & Recovery
 
+### With a handy script
+
+Use the script [scripts/generate_image.sh](https://github.com/jonesthefox/odroid-m1s-arch/blob/main/scripts/generate_image.sh).
+Usage: 
+   ```bash
+   ./generate_image.sh /dev/sdX
+   ```
+
+### Manually
+
 1. **Zero-fill partitions:**
 
    ```bash
@@ -133,8 +143,10 @@ umount /mnt
    ```
 2. **Create sparse eMMC image:**
 
+   **Note:** With `count=2000` we read just the first 2 GB from the device for the image, to reduce size. This works with a fresh install and may need adjustment for custom data.
+
    ```bash
-   dd if=/dev/sdX of=odroid-m1s.img bs=4M conv=sparse status=progress
+   dd if=/dev/sdX of=odroid-m1s.img bs=1M count=2000 conv=sparse status=progress
    sync; gzip odroid-m1s.img
    ```
 3. **Recovery:** Boot official UMS SD, then:

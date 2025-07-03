@@ -201,6 +201,16 @@ umount /mnt
 
 ## Backup
 
+### With a handy script
+
+Use the script [scripts/generate_image.sh](https://github.com/jonesthefox/odroid-m1s-arch/blob/main/scripts/generate_image.sh).
+Usage: 
+   ```bash
+   ./generate_image.sh /dev/sdX
+   ```
+
+### Manually
+
 1. Zero-fill partitions:
 
    ```bash

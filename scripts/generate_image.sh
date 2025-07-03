@@ -42,39 +42,43 @@ fi
 BOOT_PART="${DEVICE}1"
 ROOT_PART="${DEVICE}2"
 
+# Prepare mount directory
+MNT_DIR="/mnt/generate_image"
+mkdir -p "$MNT_DIR"
+
 # Step 1: Zero-fill free space on partitions for better sparsity
 echo "[1/4] Zero-filling free space on partitions..."
 for part in "$BOOT_PART" "$ROOT_PART"; do
   echo "  Zero-filling $part ..."
-  mkdir -p /mnt/tmp
-  mount "$part" /mnt/tmp
-  dd if=/dev/zero of=/mnt/tmp/zero.tmp bs=1M status=progress || true
+  mount "$part" "$MNT_DIR"
+  dd if=/dev/zero of="$MNT_DIR/zero.tmp" bs=1M status=progress || true
   sync
-  rm -f /mnt/tmp/zero.tmp
-  umount /mnt/tmp
-  rmdir /mnt/tmp
-
+  rm -f "$MNT_DIR/zero.tmp"
+  umount "$MNT_DIR"
 done
 
 # Step 2: Calculate image size in MiB
 echo "[2/4] Calculating required image size..."
-BOOT_START_MB=$(parted "$DEVICE" unit MiB print --script \  | awk -F: '/^  1:/ { sub(/MiB$/, "", $2); print int($2) }')
+# Get start of BOOT partition in MiB
+BOOT_START_MB=$(parted "$DEVICE" --script unit MiB print | awk '/^  1:/ { sub(/MiB$/, "", $2); print int($2) }')
 
-mount "$ROOT_PART" /mnt/tmp
-USED_MB=$(df --output=used -B1M /mnt/tmp | tail -n1 | tr -dc '0-9')
-umount /mnt/tmp
-rmdir /mnt/tmp
+echo "Mounting root partition $ROOT_PART to measure used space..."
+mount "$ROOT_PART" "$MNT_DIR"
+USED_MB=$(df --output=used -B1M "$MNT_DIR" | tail -n1 | tr -dc '0-9')
+umount "$MNT_DIR"
 
-COUNT=$(( BOOT_START_MB + USED_MB + 100 ))
+# Add buffer
+BUFFER=100
+COUNT=$(( BOOT_START_MB + USED_MB + BUFFER ))
 echo "  BOOT starts at ${BOOT_START_MB} MiB"
 echo "  Rootfs uses ${USED_MB} MiB"
-echo "  Total image size = ${COUNT} MiB (incl. 100 MiB buffer)"
+echo "  Total image size = ${COUNT} MiB (incl. ${BUFFER} MiB buffer)"
 
 # Step 3: Create sparse image
 IMG_NAME="$(basename "$DEVICE").img"
 echo "[3/4] Creating sparse image $IMG_NAME (count=${COUNT} MiB)..."
 
-dd if="${DEVICE}" of="$IMG_NAME" bs=1M count="$COUNT" conv=sparse status=progress
+dd if="$DEVICE" of="$IMG_NAME" bs=1M count="$COUNT" conv=sparse status=progress
 sync
 
 # Step 4: Compress
