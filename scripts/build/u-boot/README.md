@@ -28,7 +28,7 @@ if you want to do so.
 **definitely** connect a serial console to the uart pins on your Odroid M1S to be able
 to see the output and troubleshoot/debug.
 
-> **Info:** You find the default config we used in [u-boot/config](../../../u-boot/config).
+> **Info:** You find the default config we used in [u-boot.config](u-boot.config).
 It has the UMS command to set the device to USB Mass Storage mode and has HDMI and 
 USB keyboard support. Copy the file to `/usr/src/your-u-boot-source/.config`
 

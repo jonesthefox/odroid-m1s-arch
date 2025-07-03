@@ -1,6 +1,7 @@
 #!/bin/sh
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
+PYTHON=$(which python3)
 
 if [ -f "$SCRIPT_DIR/config.env" ]; then
     . "$SCRIPT_DIR/config.env"
@@ -135,7 +136,7 @@ sed -i "s/uart baudrate=/uart baudrate=$BAUDRATE/" "$ROOTPATH/rkbin/tools/ddrbin
 # Disable printing of training results
 sed -i 's/dis_train_print=/dis_train_print=1/' "$ROOTPATH/rkbin/tools/ddrbin_param.txt"
 
-"$ROOTPATH/rkbin/tools/ddrbin_tool" "$SOC" "$ROOTPATH/rkbin/tools/ddrbin_param.txt" "$ROOTPATH/rkbin/$DDRBIN"
+"$PYTHON" "$ROOTPATH/rkbin/tools/ddrbin_tool.py" "$SOC" "$ROOTPATH/rkbin/tools/ddrbin_param.txt" "$ROOTPATH/rkbin/$DDRBIN"
 
 # restore ddrbin_param.txt
 if ! cp "$ROOTPATH"/rkbin/tools/ddrbin_param.ori "$ROOTPATH"/rkbin/tools/ddrbin_param.txt; then
@@ -162,19 +163,19 @@ if [ "$use_dotconfig" = true ]; then
       echo "Error: Failed to backup .config to /tmp" >&2
       exit 1
     fi
-    make mrproper
+    # make mrproper
     if ! mv /tmp/u-boot_dotconfig .config; then
       echo "Error: Failed restore .config from /tmp" >&2
       exit 1
     fi
     echo "Using existing .config in the U-Boot directory..."
 elif [ "$use_defconfig" = true ]; then
-    make mrproper
+    # make mrproper
     echo "Running make $DEFCONFIG..."
     make "$DEFCONFIG"
 elif [ "$use_customconfig" = true ]; then
     echo "Copying .config from $CUSTOM_CONFIG..."
-    make mrproper
+    # make mrproper
     if ! cp "$CUSTOM_CONFIG" .config; then
         echo "Error: Failed to copy .config from $CUSTOM_CONFIG" >&2
         exit 1
