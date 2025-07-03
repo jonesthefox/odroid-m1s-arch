@@ -163,20 +163,25 @@ if [ "$use_dotconfig" = true ]; then
       echo "Error: Failed to backup .config to /tmp" >&2
       exit 1
     fi
-    # make mrproper
+    make mrproper
     if ! mv /tmp/u-boot_dotconfig .config; then
       echo "Error: Failed restore .config from /tmp" >&2
       exit 1
     fi
     echo "Using existing .config in the U-Boot directory..."
 elif [ "$use_defconfig" = true ]; then
-    # make mrproper
+    make mrproper
     echo "Running make $DEFCONFIG..."
     make "$DEFCONFIG"
 elif [ "$use_customconfig" = true ]; then
     echo "Copying .config from $CUSTOM_CONFIG..."
-    # make mrproper
-    if ! cp "$CUSTOM_CONFIG" .config; then
+    make mrproper
+    # allow relative paths in CUSTOM_CONFIG → resolve against SCRIPT_DIR
+    CONFIG_PATH="$CUSTOM_CONFIG"
+    if [ ! -f "$CONFIG_PATH" ]; then
+        CONFIG_PATH="$SCRIPT_DIR/$CUSTOM_CONFIG"
+    fi
+    if ! cp "$CONFIG_PATH" .config; then
         echo "Error: Failed to copy .config from $CUSTOM_CONFIG" >&2
         exit 1
     fi
