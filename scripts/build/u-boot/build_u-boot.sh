@@ -117,7 +117,7 @@ if [ "$install_deps" = true ]; then
 fi
 
 clone_git_repo "$REPO_RKBIN" "$ROOTPATH/rkbin"
-clone_git_repo "$REPO_UBOOT" "$ROOTPATH/u-boot-rockchip" "rk3xxx-2024.10"
+clone_git_repo "$REPO_UBOOT" "$ROOTPATH/u-boot-rockchip" "$REPO_UBOOT_BRANCH"
 
 # Configure DDR initialisation bin
 DDRBIN=$(confget -f "$ROOTPATH"/rkbin/RKBOOT/"$VARIANT"MINIALL.ini -s LOADER_OPTION FlashData)
