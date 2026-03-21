@@ -65,7 +65,7 @@ Create hook directory:
 mkdir -p /etc/initcpio/post
 ```
 
-Create `/etc/initcpio/post/90-uinitrd` or download it [here](https://github.com/jonesthefox/odroid-m1s-arch/tree/main/scripts/build/initcpio/post/90-uinitrd):
+Create `/etc/initcpio/post/90-uinitrd` or download it [here](scripts/build/initcpio/post/90-uinitrd):
 
 ```bash
 #!/bin/sh
