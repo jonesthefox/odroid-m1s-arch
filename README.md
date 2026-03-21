@@ -14,7 +14,7 @@ This repository provides everything you need to install and run Arch Linux on th
 * Follow these instructions at your own risk; bricking is unlikely but possible. See [Recovery](#recovery) for rescue steps.
 
 ## Finally you can use the Arch Linux mainline kernel!
-> Head over to [README_MAINLINE_KERNEL.md](https://github.com/jonesthefox/odroid-m1s-arch/tree/main/README_MAINLINE_KERNEL.md) 
+> Head over to [README_MAINLINE_KERNEL.md](README_MAINLINE_KERNEL.md) 
 
 I also made some (little) effort to get `op-tee` working on the Odroid M1S, but actually it's not working. I gave up, because i don't think it's worth the hassle,
 but if you want to try experimenting, head over [here](https://github.com/jonesthefox/odroid-m1s-arch/tree/main/op-tee/README.md). It's not much, and also it's not working,
