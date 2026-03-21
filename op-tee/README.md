@@ -54,5 +54,5 @@ make ARCH=arm CROSS_COMPILE=aarch64-linux-gnu- \
 
 ## Script
 
-I added a [build_u-boot_optee.sh](scripts/build/u-boot/build_u-boot_optee.sh) script to build the u-boot and optee-os binaries, you may
+I added a [build_u-boot_optee.sh](/scripts/build/u-boot/build_u-boot_optee.sh) script to build the u-boot and optee-os binaries, you may
 find additional information in the script.
