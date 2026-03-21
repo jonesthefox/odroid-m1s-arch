@@ -3,3 +3,6 @@
 /rk3566-odroid-m1s.dtb
 /u-boot-rockchip.bin
 /dist.tar.gz
+/.venv/
+/op-tee/plat-rockchip
+/op-tee/rkbin

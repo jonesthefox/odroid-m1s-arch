@@ -1,0 +1,30 @@
+#!/bin/sh
+set -eu
+
+kernel="${1:-}"
+image="${2:-}"
+uki="${3:-}"
+
+# We only care about regular initramfs images.
+[ -n "$image" ] || exit 0
+[ -f "$image" ] || exit 0
+
+# Build a U-Boot uInitrd next to the generated initramfs.
+# Example:
+#   /boot/initramfs-linux.img -> /boot/uInitrd
+#   /boot/initramfs-linux-fallback.img -> /boot/uInitrd-fallback
+
+case "$image" in
+  /boot/initramfs-linux.img)
+    out="/boot/uInitrd"
+    ;;
+  /boot/initramfs-linux-fallback.img)
+    out="/boot/uInitrd-fallback"
+    ;;
+  *)
+    # Ignore other images/presets unless you want to handle them too.
+    exit 0
+    ;;
+esac
+
+/usr/bin/mkimage -A arm -T ramdisk -C gzip -d "$image" "$out"

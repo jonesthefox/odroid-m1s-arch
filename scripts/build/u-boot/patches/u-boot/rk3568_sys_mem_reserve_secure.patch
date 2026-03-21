@@ -1,0 +1,11 @@
+diff --git a/include/configs/rk3568_common.h b/include/configs/rk3568_common.h
+index b2a35db0b94..c7573dee375 100644
+--- a/include/configs/rk3568_common.h
++++ b/include/configs/rk3568_common.h
+@@ -37,4 +37,6 @@
+ 	ROCKCHIP_DEVICE_SETTINGS	\
+ 	"boot_targets=" BOOT_TARGETS "\0"
+ 
++#define CFG_SYS_MEM_RESERVE_SECURE   (2 * 1024 * 1024)
++
+ #endif /* __CONFIG_RK3568_COMMON_H */

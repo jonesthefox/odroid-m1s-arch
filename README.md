@@ -13,6 +13,13 @@ This repository provides everything you need to install and run Arch Linux on th
 * **Serial connection strongly recommended:** If something goes wrong, a UART console will save your device from a hard brick.
 * Follow these instructions at your own risk; bricking is unlikely but possible. See [Recovery](#recovery) for rescue steps.
 
+## Finally you can use the Arch Linux mainline kernel!
+> Head over to [README_MAINLINE_KERNEL.md](https://github.com/jonesthefox/odroid-m1s-arch/tree/main/README_MAINLINE_KERNEL.md) 
+
+I also made some (little) effort to get `op-tee` working on the Odroid M1S, but actually it's not working. I gave up, because i don't think it's worth the hassle,
+but if you want to try experimenting, head over [here](https://github.com/jonesthefox/odroid-m1s-arch/tree/main/op-tee/README.md). It's not much, and also it's not working,
+but it's a start and you may find something useful. Or.. probably not.
+
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)
@@ -86,6 +93,7 @@ For a quick setup using prebuilt images, see [INSTALL.md](INSTALL.md).
 
 ```bash
 dd if=u-boot-rockchip.bin of=/dev/sdX bs=32k seek=1 conv=fsync
+# dd if=idbloader-fox.img of=/dev/sdX bs=512 seek=64 conv=fsync
 ```
 
 > **Warning:** Do *not* specify a partition (e.g., `/dev/sdX1`). U-Boot is written to the first 16 MB.
@@ -97,6 +105,7 @@ dd if=u-boot-rockchip.bin of=/dev/sdX bs=32k seek=1 conv=fsync
    ```bash
    d                # delete existing partitions
    n 1 32768 +256M 8300  # create BOOT partition
+#   n 1 131072 +256M 8300  # create BOOT partition
    n 2     0   8300      # create rootfs partition
    w                      # write changes
    ```

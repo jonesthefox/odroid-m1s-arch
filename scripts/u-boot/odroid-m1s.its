@@ -1,0 +1,98 @@
+/dts-v1/;
+/ {
+    description = "FIT for ODROID-M1S (rk3566)";
+
+    #address-cells = <1>;
+    #size-cells = <1>;
+
+    images {
+        /* Dein bestehendes U-Boot */
+        u-boot {
+            description = "U-Boot";
+            data = /incbin/("u-boot-spl.bin");
+            type = "standalone";
+            arch = "arm64";
+            os = "U-Boot";
+            compression = "none";
+            load = <0x00a00000>;
+            entry = <0x00a00000>;
+            hash@1 {
+                algo = "sha256";
+            };
+        };
+
+        /* ARM Trusted Firmware */
+        atf-1 {
+            description = "ARM Trusted Firmware BL31";
+            data = /incbin/("bl31.elf");
+            type = "firmware";
+            arch = "arm64";
+            os = "arm-trusted-firmware";
+            compression = "none";
+            load = <0x00040000>;
+            hash@1 { algo = "sha256"; };
+        };
+
+        /* OP-TEE */
+        tee-1 {
+            description = "OP-TEE";
+            data = /incbin/("tee.bin");
+            type = "tee";
+            arch = "arm64";
+            os = "op-tee";
+            compression = "none";
+            load = <0x00f00000>;
+            hash@1 { algo = "sha256"; };
+        };
+
+        /* Device Tree */
+        fdt-1 {
+            description = "Device Tree for ODROID-M1S";
+            data = /incbin/("rk3566-odroid-m1s.dtb");
+            type = "flat_dt";
+            arch = "arm64";
+            compression = "none";
+            hash@1 { algo = "sha256"; };
+        };
+
+        /* Linux-Kernel */
+        kernel {
+            description = "Linux Kernel Image";
+            data = /incbin/("Image");
+            type = "kernel";
+            arch = "arm64";
+            os = "linux";
+            compression = "none";
+            load = <0x80080000>;
+            entry = <0x80080000>;
+            hash@1 { algo = "sha256"; };
+        };
+
+        /* Initial RAM-Disk */
+        ramdisk {
+            description = "Initial RAM Disk";
+            data = /incbin/("uInitrd");
+            type = "ramdisk";
+            arch = "arm64";
+            os = "linux";
+            compression = "none";
+            load = <0x83000000>;
+            hash@1 { algo = "sha256"; };
+        };
+    };
+
+    configurations {
+        default = "conf-1";
+        conf-1 {
+            description = "Boot ODROID-M1S with Kernel+Initrd";
+            firmware = "atf-1";
+            fdt = "fdt-1";
+            kernel = "kernel";
+            ramdisk = "ramdisk";
+            loadables = "u-boot", "tee-1";
+            properties {
+                bootargs = "root=/dev/mmcblk0p2 rw console=ttyS2,1500000";
+            };
+        };
+    };
+};
