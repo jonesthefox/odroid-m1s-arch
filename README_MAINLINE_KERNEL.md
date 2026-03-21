@@ -20,7 +20,7 @@ mount /dev/mmcblk0p1 /mnt
 
 ### 2. Configure U-Boot boot script
 
-Download [boot-arch.cmd](https://github.com/jonesthefox/odroid-m1s-arch/tree/main/scripts/u-boot/boot-arch.cmd) to `/mnt`.
+Download [boot-arch.cmd](scripts/u-boot/boot-arch.cmd) to `/mnt`.
 
 Or create it manually:
 
